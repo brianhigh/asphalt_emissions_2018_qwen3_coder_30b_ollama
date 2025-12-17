@@ -1,0 +1,19 @@
+# .gitignore for R projects
+
+# RStudio
+.Rproj.user/
+.Rhistory
+.RData
+.Ruserdata
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# data/ and plots/ folders should NOT be ignored
+!data/
+!plots/
+

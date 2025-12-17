@@ -1,0 +1,49 @@
+--- create_asphalt_map.orig.R	2025-12-17 08:03:50.068561252 -0800
++++ create_asphalt_map.R	2025-12-17 08:06:00.854463878 -0800
+@@ -9,7 +9,8 @@
+   sf,
+   here,
+   vroom,
+-  lubridate
++  lubridate,
++  stringr
+ )
+ 
+ # Define paths
+@@ -39,9 +40,9 @@
+     .name_repair = "unique_quiet"
+   ) %>%
+     select(State, `Total kg/person`) %>%
+-    rename(total_kg_per_person = `Total kg/person`) %>%
++    rename(total_kg_per_person = `Total kg/person`, state = `State`) %>%
+     mutate(
+-      State = str_to_lower(State),
++      state = str_to_lower(state),
+       total_kg_per_person = suppressWarnings(as.numeric(total_kg_per_person))
+     )
+   
+@@ -52,8 +53,7 @@
+ 
+ # Get state map data
+ tryCatch({
+-  us_states <- plot_usmap(regions = "states", include = c("AK", "HI")) +
+-    geom_polygon(aes(fill = total_kg_per_person), linewidth = 0.5) +
++  us_states <- plot_usmap(data = emissions_data, values = "total_kg_per_person") +
+     scale_fill_gradient2(
+       low = "darkgreen",
+       mid = "yellow",
+@@ -82,7 +82,8 @@
+     width = 10,
+     height = 6,
+     dpi = 300,
+-    units = "in"
++    units = "in",
++    bg = "white" # Explicitly set background for PNG
+   )
+ 
+   message("Map saved successfully to ", plots_path)
+@@ -90,3 +91,4 @@
+ }, error = function(e) {
+   stop("Error creating map: ", e$message)
+ })
++
